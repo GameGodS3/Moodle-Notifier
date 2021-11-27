@@ -25,7 +25,7 @@ class MoodleConnection:
             self.adaptor.close()
 
     def login(self) -> Response:
-        soup = BeautifulSoup(self.login_page.text, 'lxml')
+        soup = BeautifulSoup(self.login_page.text, 'html5lib')
         login_token = soup.find('input', attrs={"name": "logintoken"})["value"]
         payload = {
             "anchor": "",
