@@ -1,8 +1,8 @@
 import traceback
 
 import requests
-from lxml import html
 from requests.models import Response
+from bs4 import BeautifulSoup
 
 
 class MoodleConnection:
@@ -25,9 +25,8 @@ class MoodleConnection:
             self.adaptor.close()
 
     def login(self) -> Response:
-        tree = html.fromstring(self.login_page.text)
-        login_token = list(
-            set(tree.xpath("//input[@name='logintoken']/@value")))[0]
+        soup = BeautifulSoup(self.login_page.text, 'lxml')
+        login_token = soup.find('input', attrs={"name": "logintoken"})["value"]
         payload = {
             "anchor": "",
             "username": self.__user,
@@ -42,3 +41,18 @@ class MoodleConnection:
         )
 
         return result
+
+    def course_list(self, home_page_response: Response) -> list:
+        home_page = BeautifulSoup(home_page_response.text, 'lxml')
+
+        course_menu = home_page.find_all('div', {'class': 'ml-1'})
+
+        course_list = []
+
+        for i in course_menu:
+            for j in i.strings:
+                course_list.append(j)
+
+        course_list = list(filter(lambda a: a != "\n", course_list))
+
+        return course_list
