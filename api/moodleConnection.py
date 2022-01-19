@@ -1,4 +1,5 @@
 import traceback
+from bs4.element import ResultSet
 
 import requests
 from requests.models import Response
@@ -42,8 +43,8 @@ class MoodleConnection:
 
         return result
 
-    def course_list(self, home_page_response: Response) -> list:
-        home_page = BeautifulSoup(home_page_response.text, 'lxml')
+    def get_course_list(self, home_page_content: str) -> list:
+        home_page = BeautifulSoup(home_page_content, 'html5lib')
 
         course_menu = home_page.find_all('div', {'class': 'ml-1'})
 
@@ -51,8 +52,27 @@ class MoodleConnection:
 
         for i in course_menu:
             for j in i.strings:
-                course_list.append(j)
-
-        course_list = list(filter(lambda a: a != "\n", course_list))
+                if '\n' not in j:
+                    url = i.parent['href']
+                    course_list.append({j: url})
 
         return course_list
+
+    def get_assignments(self, course_link: str) -> ResultSet:
+        course_page = self.adaptor.get(course_link)
+        with open('coursepage.html', 'w') as f:
+            f.write(course_page.text)
+        course_page_content = course_page.text
+
+        # with open('coursepage.html', 'r') as f:
+        #     course_page_content = f.read()
+
+        course_soup = BeautifulSoup(course_page_content, 'html5lib')
+
+        assignments = course_soup.find_all(
+            'li', {'class': ['section', 'main', 'clearfix']})
+
+        for i in assignments:
+            print(i, '\n--------------------------------------\n')
+
+        return assignments
