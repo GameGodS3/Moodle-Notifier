@@ -1,3 +1,4 @@
+from sys import modules
 import traceback
 from bs4.element import ResultSet
 
@@ -58,10 +59,10 @@ class MoodleConnection:
 
         return course_list
 
-    def get_assignments(self, course_link: str) -> ResultSet:
+    def get_content(self, course_link: str) -> ResultSet:
         course_page = self.adaptor.get(course_link)
-        with open('coursepage.html', 'w') as f:
-            f.write(course_page.text)
+        # with open('coursepage.html', 'w') as f:
+        #     f.write(course_page.text)
         course_page_content = course_page.text
 
         # with open('coursepage.html', 'r') as f:
@@ -69,10 +70,27 @@ class MoodleConnection:
 
         course_soup = BeautifulSoup(course_page_content, 'html5lib')
 
-        assignments = course_soup.find_all(
-            'li', {'class': ['section', 'main', 'clearfix']})
+        modules_raw = course_soup.find_all('h3', {'class': 'sectionname'})[1:]
+        assignments_raw = course_soup.find_all('li', {'class': 'assign'})
+        resources_raw = course_soup.find_all('li', {'class': 'resource'})[2:]
 
-        for i in assignments:
-            print(i, '\n--------------------------------------\n')
+        # To find Assignment Names
+        assignments = []
+        for i in assignments_raw:
+            assignments += i.find('span',
+                                  {'class': 'instancename'}).stripped_strings
+        assignments = assignments[::2]
 
-        return assignments
+        # To find Module Names
+        modules = []
+        for i in modules_raw:
+            modules += i.stripped_strings
+
+        # To find Resources Names
+        resources = []
+        for i in resources_raw:
+            resources += i.find('span',
+                                {'class': 'instancename'}).stripped_strings
+        resources = resources[::2]
+
+        return [modules, assignments, resources]
