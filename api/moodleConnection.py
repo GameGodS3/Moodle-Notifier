@@ -47,22 +47,23 @@ class MoodleConnection:
     def get_course_list(self, home_page_content: str) -> list:
         home_page = BeautifulSoup(home_page_content, 'html5lib')
 
-        course_menu = home_page.find_all('div', {'class': 'ml-1'})
+        course_elements = home_page.find_all('h3', {'class': 'coursename'})
 
         course_list = []
 
-        for i in course_menu:
-            for j in i.strings:
-                if '\n' not in j:
-                    url = i.parent['href']
-                    course_list.append({j: url})
+        for i in course_elements:
+            for j in i.stripped_strings:
+                course_name = j
+            for j in i.children:
+                course_url = j['href']
+            course_list.append({course_name: course_url})
 
         return course_list
 
     def get_content(self, course_link: str) -> ResultSet:
         course_page = self.adaptor.get(course_link)
-        # with open('coursepage.html', 'w') as f:
-        #     f.write(course_page.text)
+        with open('coursepage.html', 'w') as f:
+            f.write(course_page.text)
         course_page_content = course_page.text
 
         # with open('coursepage.html', 'r') as f:
@@ -72,7 +73,9 @@ class MoodleConnection:
 
         modules_raw = course_soup.find_all('h3', {'class': 'sectionname'})[1:]
         assignments_raw = course_soup.find_all('li', {'class': 'assign'})
-        resources_raw = course_soup.find_all('li', {'class': 'resource'})[2:]
+        pdfs_raw = course_soup.find_all('li', {'class': 'resource'})[2:]
+        page_raw = course_soup.find_all('li', {'class': 'page'})[3:]
+        videos_raw = course_soup.find_all('li', {'class': 'hvp'})
 
         # To find Assignment Names
         assignments = []
@@ -86,11 +89,25 @@ class MoodleConnection:
         for i in modules_raw:
             modules += i.stripped_strings
 
-        # To find Resources Names
-        resources = []
-        for i in resources_raw:
-            resources += i.find('span',
-                                {'class': 'instancename'}).stripped_strings
-        resources = resources[::2]
+        # To find PDF Names
+        pdfs = []
+        for i in pdfs_raw:
+            pdfs += i.find('span',
+                           {'class': 'instancename'}).stripped_strings
+        pdfs = pdfs[::2]
 
-        return [modules, assignments, resources]
+        # To find Linked Pages
+        pages = []
+        for i in page_raw:
+            pages += i.find('span',
+                            {'class': 'instancename'}).stripped_strings
+        pages = pages[::2]
+
+        # To find Videos
+        videos = []
+        for i in videos_raw:
+            videos += i.find('span',
+                             {'class': 'instancename'}).stripped_strings
+        videos = videos[::2]
+
+        return [modules, assignments, pdfs, pages, videos]
