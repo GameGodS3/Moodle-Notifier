@@ -5,7 +5,10 @@ from api.moodleConnection import MoodleConnection
 from dotenv import load_dotenv
 
 
-def scrape() -> dict:
+def scrape() -> list:
+    """
+    Scrape the moodle course list and return a dict with the courses
+    """
     load_dotenv()
     username = os.getenv("MOODLEUSERNAME")
     password = os.getenv("MOODLEPASSWD")
@@ -20,13 +23,25 @@ def scrape() -> dict:
             [modules, assignments, pdfs, pages, videos] = moodle_session.get_content(
                 subject_link)
             content = {
-                "Module": modules,
-                "Assignment": assignments,
-                "PDF": pdfs,
-                "Page Link": pages,
-                "Video": videos
             }
-        course_dump[subject_name] = content
+            if modules:
+                content["module"] = modules
+            if assignments:
+                content["assignment"] = assignments
+            if pdfs:
+                content["pdf"] = pdfs
+            if pages:
+                content["page"] = pages
+            if videos:
+                content["video"] = videos
+        # course_dump[subject_name] = content
+        course_dump.update({course_list.index(i): {subject_name: content}})
+
+        # Remove all empty key value pairs in course dump
+        # course_dump_clean = {k: v for k, v in course_dump.items() if v}
+
+    course_dump = [v for k, v in course_dump.items()]
+    print(course_dump)
 
     with open("courseContents.json", "w") as f:
         json.dump(course_dump, f)

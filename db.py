@@ -1,3 +1,4 @@
+import json
 from firebase import Firebase
 import os
 # from decouple import config
@@ -26,7 +27,8 @@ def getData():
     # subjects = db.get().val()
     # for notif in subjects:
     #     data.append(notif)
-    return dict(db.get().val())
+    data = db.get().val()
+    return data
 
 
 def setData(data):

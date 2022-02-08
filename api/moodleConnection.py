@@ -62,8 +62,8 @@ class MoodleConnection:
 
     def get_content(self, course_link: str) -> ResultSet:
         course_page = self.adaptor.get(course_link)
-        with open('coursepage.html', 'w') as f:
-            f.write(course_page.text)
+        # with open('coursepage.html', 'w') as f:
+        #     f.write(course_page.text)
         course_page_content = course_page.text
 
         # with open('coursepage.html', 'r') as f:
