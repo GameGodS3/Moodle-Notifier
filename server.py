@@ -42,7 +42,7 @@ def notif_check():
         for i in notif:
             [subject, restype, title] = [i, list(notif[i].keys())[0], list(notif[i].values())[0]]
             print(subject, restype, title)
-            bot.send_message(chat_id = chat_id, text = f"**{subject}**\n\n{title} ({restype.capitalize()})", parse_mode="Markdown" )
+            bot.send_message(chat_id = chat_id, text = f"*{subject}*\n\n{title} ({restype.capitalize()})", parse_mode="Markdown" )
         print("Message Sent")
 
         db.setData(curr_dump)
