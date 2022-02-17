@@ -1,12 +1,17 @@
 import json
 import scrapper
 import db
+import os
 from deepdiff import DeepDiff
+from dotenv import load_dotenv
+load_dotenv()
+
+import telegram
 
 from flask import Flask
 
 app = Flask(__name__)
-
+bot = telegram.Bot(os.getenv("TELEGRAMBOTTOKEN"))
 
 @app.route('/')
 def hello_world():
@@ -35,8 +40,16 @@ def notif_check():
 
         db.setData(curr_dump)
 
+        for i in notif:
+            [subject, restype, title] = [i, list(notifs[i].keys())[0], list(notifs[i].values())[0]]
+            print(subject, restype, title)
+            bot.send_message(chat_id = 960535545, text = f"New {restype} posted in {subject} : {title}")
+        print("Message Sent")
+
         return notif
     else:
+        bot.send_message(chat_id = 960535545, text = "No New Notifications")
+        print("Message Sent")
         return "No new notifications"
 
 
