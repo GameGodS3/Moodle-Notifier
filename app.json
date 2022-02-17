@@ -1,0 +1,40 @@
+{
+    "name": "LMS CET Moodle Notifier",
+    "description": "Fetches notifications from CET LMS",
+    "repository": "https://github.com/GameGodS3/Moodle-Notifier",
+    "env": {
+        "MOODLEUSERNAME": {
+            "description":"Your Moodle Username"
+        },
+        "MOODLEPASSWD": {
+            "description":"Your Moodle Password"
+        },
+        "APIKEY": {
+            "description":"Firebase API Key"
+        },
+        "AUTHDOMAIN": {
+            "description":"Firebase Auth Domain"
+        },
+        "DBURL": {
+            "description":"Firebase Database URL"
+        },
+        "PROJID": {
+            "description":"Firebase Project ID"
+        },
+        "STOBUCK": {
+            "description":"Firebase Storage Bucket"
+        },
+        "MSGID": {
+            "description":"Firebase Message ID"
+        },
+        "APPID": {
+            "description":"Firebase App ID"
+        },
+        "TELEGRAMBOTTOKEN": {
+            "description":"Telegram Bot Token"
+        },
+        "TELEGRAMCHATID":{
+            "description":"Your Telegram Chat ID"
+        }
+    }
+}
