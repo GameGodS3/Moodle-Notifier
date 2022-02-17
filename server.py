@@ -38,13 +38,14 @@ def notif_check():
             subject_and_type = ["["+e for e in k.split("[") if e][-3:-1]
             notif[subject_and_type[0][2:-2]] = {subject_and_type[1][2:-2]: v}
 
-        db.setData(curr_dump)
 
         for i in notif:
-            [subject, restype, title] = [i, list(notifs[i].keys())[0], list(notifs[i].values())[0]]
+            [subject, restype, title] = [i, list(notif[i].keys())[0], list(notif[i].values())[0]]
             print(subject, restype, title)
             bot.send_message(chat_id = chat_id, text = f"New {restype} posted in {subject} : {title}")
         print("Message Sent")
+
+        db.setData(curr_dump)
 
         return notif
     else:
