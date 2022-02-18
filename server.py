@@ -69,6 +69,7 @@ def testping():
     for user in users:
         if users[user] == "T":
             bot.send_message(chat_id=user, text="This is a test ping from Moodle Notifier Bot to all users. Bot is under maintainence and testing. Sorry for the inconvenience")
+    return "Pinged all users"
 
 @app.route('/check')
 def notif_check():
