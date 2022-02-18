@@ -49,8 +49,8 @@ def notif_check():
 
         return notif
     else:
-        bot.send_message(chat_id = chat_id, text = "No New Notifications")
-        print("Message Sent")
+    #    bot.send_message(chat_id = chat_id, text = "No New Notifications")
+    #    print("Message Sent")
         return "No new notifications"
 
 
