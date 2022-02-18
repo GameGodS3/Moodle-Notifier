@@ -11,10 +11,51 @@ import telegram
 from flask import Flask
 
 app = Flask(__name__)
-bot = telegram.Bot(os.getenv("TELEGRAMBOTTOKEN"))
+token = os.getenv("TELEGRAMBOTTOKEN")
+bot = telegram.Bot(token)
+herokuURL = os.getenv("HEROKUURL")
+
+
 @app.route('/')
 def hello_world():
     return 'Hello World'
+
+
+@app.route('/{}'.format(token), methods=['POST'])
+def respond():
+    """
+    Responds to slash commands issued to bot via Telegram
+    """
+
+    # Retrieve message in JSON and transform it to Telegram object
+    update = telegram.Update.de_json(request.get_json(force=True), bot)
+    chat_id = update.effective_message.chat.id
+    msg_id = update.effective_message.message_id
+
+    # UTF-8 formatting
+    text = update.message.text.encode('utf-8').decode()
+    # for debugging
+    print("Got text message: ", text)
+
+    ### Slash Command
+    # Welcome message / Start Message
+    if text == "/start":
+        bot_welcome = """
+You have subscribed to notifications for LMS CET CS
+        """
+        bot.sendMessage(chat_id=chat_id, text=bot_welcome,
+                        reply_to_message_id=msg_id)
+
+
+@app.route('/set_webhook', methods=['GET', 'POST'])
+def set_webhook():
+    s = bot.set_webhook('{URL}{HOOK}'.format(URL=herokuURL, HOOK=token))
+
+    # debugging prints
+    if s:
+        return "Webhook setup OK"
+    else:
+        return "Webhook setup failed"
 
 
 @app.route('/check')
@@ -55,4 +96,4 @@ def notif_check():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(threaded = True)
