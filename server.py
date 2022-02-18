@@ -47,6 +47,7 @@ You have subscribed to notifications for LMS CET CS
         """
         bot.sendMessage(chat_id=chat_id, text=bot_welcome,
                         reply_to_message_id=msg_id)
+        db.subscribe(user_id)
     return str(user_id)
 
 
