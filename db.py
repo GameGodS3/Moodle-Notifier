@@ -27,13 +27,13 @@ def getData():
     # subjects = db.get().val()
     # for notif in subjects:
     #     data.append(notif)
-    data = db.get().val()
+    data = db.child("scrapedata").get().val()
     return data
 
 
 def setData(data):
     """ Updates the notifications Firebase DB with the new notifications """
-    db.set(data)
+    db.child("scrapedata").set(data)
 
 
 def users():
@@ -46,11 +46,6 @@ def users():
 def subscribe(chat_id):
     """ Adds the user as a Subscriber in the Firebase Database """
     db.child("subs").child(str(chat_id)).set("T")
-
-
-def relevantsub(chat_id):
-    """ Adds the user as subscriber of Relevant notifications in the Firebase Database """
-    db.child("subs").child(str(chat_id)).set("R")
 
 
 def unsubscribe(chat_id):

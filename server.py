@@ -30,13 +30,14 @@ def respond():
     # Retrieve message in JSON and transform it to Telegram object
     update = telegram.Update.de_json(request.get_json(force=True), bot)
     print(update)
-    chat_id = update.effective_message.chat.id
+    chat_id = update['my_chat_member']['chat']['id']
     msg_id = update.effective_message.message_id
 
     # UTF-8 formatting
     text = update.message.text.encode('utf-8').decode()
     # for debugging
     print("Got text message: ", text)
+    print("Message ID: ", msg_id)
 
     ### Slash Command
     # Welcome message / Start Message
