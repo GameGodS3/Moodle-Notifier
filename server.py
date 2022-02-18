@@ -30,7 +30,7 @@ def respond():
     # Retrieve message in JSON and transform it to Telegram object
     update = telegram.Update.de_json(request.get_json(force=True), bot)
     print(update)
-    chat_id = update.my_chat_member.chat.id
+    chat_id = update.effective_message.chat.id
     msg_id = update.effective_message.message_id
 
     # UTF-8 formatting
@@ -46,7 +46,7 @@ You have subscribed to notifications for LMS CET CS
         """
         bot.sendMessage(chat_id=chat_id, text=bot_welcome,
                         reply_to_message_id=msg_id)
-    return str(chat_id)
+    return str(msg_id)
 
 
 @app.route('/set_webhook', methods=['GET', 'POST'])
