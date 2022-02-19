@@ -64,12 +64,15 @@ def set_webhook():
         return "Webhook setup failed"
 
 @app.route('/testping')
-def testping():
+def testping(msg=None):
     users = db.users()
     for user in users:
         if users[user] == "T":
-            bot.send_message(chat_id=user, text="This is a test ping from Moodle Notifier Bot to all users. Bot is under maintainence and testing. Sorry for the inconvenience")
-    return "Pinged all users"
+            if msg:
+                bot.send_message(chat_id=user, text=str(msg))
+            else:
+                bot.send_message(chat_id=user, text="This is a test ping from Moodle Notifier Bot to all users. Bot is under maintainence and testing. Sorry for the inconvenience")
+    return "Pinged all users" if !msg else f"Sent '{msg}' to all users"
 
 @app.route('/check')
 def notif_check():
@@ -81,7 +84,6 @@ def notif_check():
     # with open('courseContents copy.json', 'r') as g:
     #     curr_dump = json.loads(g.read())
 
-    chat_id = os.getenv("TELEGRAMCHATID")
     dump_diff = DeepDiff(prev_dump, curr_dump)
     if dump_diff != {}:
         print(dump_diff)
@@ -93,13 +95,13 @@ def notif_check():
             notif[subject_and_type[0][2:-2]] = {subject_and_type[1][2:-2]: v}
 
 
-        for i in notif:
-            [subject, restype, title] = [i, list(notif[i].keys())[0], list(notif[i].values())[0]]
-            print(subject, restype, title)
-            users = db.users()
-            for user in users:
-                if users[user] == "T":
-                    bot.send_message(chat_id = chat_id, text = f"*{subject}*\n\n{title} ({restype.capitalize()})", parse_mode="Markdown" )
+        users = db.users()
+        for user in users:
+            if users[user] == "T":
+                for i in notif:
+                    [subject, restype, title] = [i, list(notif[i].keys())[0], list(notif[i].values())[0]]
+                    print(subject, restype, title)
+                    bot.send_message(chat_id = user, text = f"*{subject}*\n\n{title} ({restype.capitalize()})", parse_mode="Markdown" )
         print("Message Sent")
 
         db.setData(curr_dump)
