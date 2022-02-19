@@ -1,3 +1,5 @@
+from flask import Flask, request
+import telegram
 import json
 import scrapper
 import db
@@ -6,9 +8,6 @@ from deepdiff import DeepDiff
 from dotenv import load_dotenv
 load_dotenv()
 
-import telegram
-
-from flask import Flask, request
 
 app = Flask(__name__)
 token = os.getenv("TELEGRAMBOTTOKEN")
@@ -39,7 +38,7 @@ def respond():
     print("Got text message: ", text)
     print("UserID: ", user_id)
 
-    ### Slash Command
+    # Slash Command
     # Welcome message / Start Message
     if text == "/start":
         bot_welcome = """
@@ -63,6 +62,7 @@ def set_webhook():
     else:
         return "Webhook setup failed"
 
+
 @app.route('/testping')
 def testping():
     msg = request.args.get("msg")
@@ -70,13 +70,16 @@ def testping():
     for user in users:
         if users[user] == "T":
             if msg:
-                bot.send_message(chat_id=user, text=str(msg), parse_mode="Markdown")
+                bot.send_message(chat_id=user, text=str(msg),
+                                 parse_mode="Markdown")
             else:
-                bot.send_message(chat_id=user, text="This is a test ping from Moodle Notifier Bot to all users. Bot is under maintainence and testing. Sorry for the inconvenience")
+                bot.send_message(
+                    chat_id=user, text="This is a test ping from Moodle Notifier Bot to all users. Bot is under maintainence and testing. Sorry for the inconvenience")
     if msg:
         return f"Sent {msg} to all users"
     else:
         return "Pinged all users"
+
 
 @app.route('/check')
 def notif_check():
@@ -100,24 +103,25 @@ def notif_check():
 
         print(notif)
 
-
         users = db.users()
         for user in users:
             if users[user] == "T":
                 for i in notif:
-                    [subject, restype, title] = [i, list(notif[i].keys())[0], list(notif[i].values())[0]]
+                    [subject, restype, title] = [
+                        i, list(notif[i].keys())[0], list(notif[i].values())[0]]
                     print(subject, restype, title)
-                    bot.send_message(chat_id = user, text = f"*{subject}*\n\n{title} ({restype.capitalize()})", parse_mode="Markdown" )
+                    bot.send_message(
+                        chat_id=user, text=f"*{subject}*\n\n{title} ({restype.capitalize()})", parse_mode="Markdown")
         print("Message Sent")
 
         db.setData(curr_dump)
 
         return notif
     else:
-    #    bot.send_message(chat_id = chat_id, text = "No New Notifications")
-    #    print("Message Sent")
+        #    bot.send_message(chat_id = chat_id, text = "No New Notifications")
+        #    print("Message Sent")
         return "No new notifications"
 
 
 if __name__ == '__main__':
-    app.run(threaded = True)
+    app.run(threaded=True)

@@ -20,6 +20,7 @@ def scrape() -> list:
 
     for i in course_list:
         for subject_name, subject_link in i.items():
+            print(f"Scraping {subject_name}...")
             [modules, assignments, pdfs, pages, videos] = moodle_session.get_content(
                 subject_link)
             content = {
