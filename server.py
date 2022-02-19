@@ -64,7 +64,8 @@ def set_webhook():
         return "Webhook setup failed"
 
 @app.route('/testping')
-def testping(msg=None):
+def testping():
+    msg = request.args.get("msg")
     users = db.users()
     for user in users:
         if users[user] == "T":
