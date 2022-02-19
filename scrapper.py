@@ -41,7 +41,7 @@ def scrape() -> list:
         # course_dump_clean = {k: v for k, v in course_dump.items() if v}
 
     course_dump = [v for k, v in course_dump.items()]
-    print(course_dump)
+    # print(course_dump)
 
     with open("courseContents.json", "w") as f:
         json.dump(course_dump, f)
