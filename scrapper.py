@@ -10,12 +10,15 @@ def scrape() -> list:
     Scrape the moodle course list and return a dict with the courses
     """
     load_dotenv()
+    print("Logging into Moodle...")
     username = os.getenv("MOODLEUSERNAME")
     password = os.getenv("MOODLEPASSWD")
     moodle_session = MoodleConnection(username, password)
     home_page_response = moodle_session.login()
+    print("Logged in")
     home_page_content = home_page_response.text
     course_list = moodle_session.get_course_list(home_page_content)
+    print(course_list)
     course_dump = {}
 
     for i in course_list:

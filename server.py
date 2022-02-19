@@ -83,7 +83,10 @@ def testping():
 
 @app.route('/check')
 def notif_check():
+    print("Getting previous course contents...")
     prev_dump = db.getData()
+
+    print("Scraping course contents...")
     curr_dump = scrapper.scrape()
 
     # with open('courseContents.json', 'r') as f:
