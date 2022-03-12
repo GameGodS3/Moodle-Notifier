@@ -96,7 +96,7 @@ def notif_check():
 
     dump_diff = DeepDiff(prev_dump, curr_dump)
     if dump_diff != {}:
-        print(dump_diff)
+#        print(dump_diff)
 
         notif = {}
 
@@ -104,7 +104,7 @@ def notif_check():
             subject_and_type = ["["+e for e in k.split("[") if e][-3:-1]
             notif[subject_and_type[0][2:-2]] = {subject_and_type[1][2:-2]: v}
 
-        print(notif)
+#        print(notif)
 
         users = db.users()
         for user in users:
